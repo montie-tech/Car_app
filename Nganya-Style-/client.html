@@ -15,6 +15,17 @@ header { background:#000; color:#fff; padding:20px; text-align:center; }
 .driverCard { background:#eaf3ff; padding:15px; border-radius:8px; margin-top:10px; }
 .hidden { display:none; }
 #map { width:100%; height:300px; border-radius:12px; margin-top:10px; }
+footer {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 5px;
+  margin-top: 30px;
+  font-size: 1rem;
+  margin-bottom: -25px;
+  margin-left: -28px;
+  margin-right: -28px;
+}
 </style>
 </head>
 <body>
@@ -57,8 +68,8 @@ header { background:#000; color:#fff; padding:20px; text-align:center; }
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script>
-const API = "https://nganya-project.onrender.com/api";
-let socket = io("https://nganya-project.onrender.com");
+const API = "http://localhost:5000/api";
+let socket = io("http://localhost:5000");
 let passengerId = null;
 let map = null;
 let userMarker = null;
@@ -193,4 +204,7 @@ function startGPS(){
 }
 </script>
 </body>
+<footer>
+    <p>© 2025 Nganya project</p>
+</footer>
 </html>

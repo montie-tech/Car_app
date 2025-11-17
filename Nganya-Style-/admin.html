@@ -3,121 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nganya Style – Admin Dashboard</title>
+<title>Admin – Driver Applications</title>
+
 <style>
-body { margin:0;font-family:Poppins,sans-serif;background:#f2f2f2 }
-header { background:#000;color:#fff;padding:20px;text-align:center }
-.container { max-width:900px;margin:auto;padding:20px }
-.card { background:#fff;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 10px rgba(0,0,0,0.1) }
-.btn { padding:10px 15px;border:none;border-radius:6px;cursor:pointer;font-size:15px;font-weight:600 }
-.approve { background:#28a745;color:#fff }
-.reject { background:crimson;color:#fff }
-.driver-card { background:#eef4ff;padding:15px;border-radius:10px;margin-bottom:15px;border-left:5px solid #0d6efd }
-.approved { border-left:5px solid #28a745;background:#ebffef }
+body { font-family: Poppins, sans-serif; padding: 20px; background: #f4f4f4; }
+h2 { margin-top: 30px; }
+.card { background: #bd9808ff;  color: #fff;padding: 20px; border-radius: 10px; margin: 20px 0; }
+button { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; }
+.approve { background: #28a745; color: #fff;border-radius: 10px; padding: 20px;}
+.reject { background: #dc2410ff; color: #fff;border-radius: 10px; padding: 15px; }
+.list-item { 
+    padding: 10px; 
+    border-bottom: 1px solid #ddd; 
+}
+
+/* Remove lines for approved drivers */
+#approvedList .list-item {
+    border-bottom: none;
+}
+
+/* Remove lines for rejected drivers */
+#rejectedList .list-item {
+    border-bottom: none;
+}
+
+.section {
+    margin-bottom: 40px;
+    margin-top: 20px;
+}
+
+footer {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 5px;
+  margin-top: 30px;
+  font-size: 1rem;
+  margin-bottom: -25px;
+  margin-left: -28px;
+  margin-right: -28px;
+}
 </style>
 </head>
+
 <body>
-<header><h2>Nganya Style – Admin Dashboard</h2></header>
-<div class="container">
-<h2>Pending Driver Applications</h2>
-<div id="pendingList"></div>
+<h1>Admin Dashboard – Nganya</h1>
 
-<h2>Approved Drivers</h2>
-<div id="approvedList"></div>
+<div class="section">
+<div class="card">
+    <h2>Pending Applications</h2>
+    <div id="pendingList"></div>
 </div>
-
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<br><br>
+<div class="approve">
+    <h2>Approved Drivers</h2>
+    <div id="approvedList"></div>
+</div>
+<br><br>
+<div class="reject">
+    <h2>Rejected Applications</h2>
+    <div id="rejectedList"></div>
+</div>
+</div>
 <script>
-const API = "https://nganya-project.onrender.com/api";
-let socket = io("https://nganya-project.onrender.com");
+const API = "http://localhost:5000/api";
 
-// Load drivers from backend
-async function loadDrivers() {
-    try {
-        const res = await fetch(`${API}/drivers/all`);
-        const drivers = await res.json();
+// LOAD ALL DRIVERS (PENDING / APPROVED / REJECTED)
+async function loadApplications(){
+    const res = await fetch(`${API}/drivers/all`);
+    const data = await res.json();
 
-        const pendingList = document.getElementById("pendingList");
-        const approvedList = document.getElementById("approvedList");
-        pendingList.innerHTML = "";
-        approvedList.innerHTML = "";
+    let pending = "";
+    let approved = "";
+    let rejected = "";
 
-        drivers.forEach(d => {
-            const card = document.createElement("div");
-            card.className = "driver-card";
-            card.innerHTML = `
-                <strong>Name:</strong> ${d.name}<br>
-                <strong>Phone:</strong> ${d.phone}<br>
-                <strong>Vehicle:</strong> ${d.vehicle || "-"}<br>
-                <strong>Route:</strong> ${d.route || "-"}<br>
-                <strong>Capacity:</strong> ${d.capacity || "-"}<br>
-                <strong>Status:</strong> ${d.status}<br>
+    data.forEach(app => {
+        let listing = `
+            <div class="list-item">
+                <b>${app.name}</b> – ${app.vehicle || '---'} – ${app.route || '---'}<br>
+                Phone: ${app.phone} — Capacity: ${app.capacity || '---'}<br>
+        `;
+
+        if(app.status === "pending"){
+            listing += `
+                <button class="approve" onclick="approve('${app._id}')">Approve</button>
+                <button class="reject" onclick="rejectApp('${app._id}')">Reject</button>
             `;
-
-            if(d.status === "pending"){
-                const btnApprove = document.createElement("button");
-                btnApprove.textContent = "Approve";
-                btnApprove.className = "btn approve";
-                btnApprove.onclick = () => approveDriver(d._id);
-
-                const btnReject = document.createElement("button");
-                btnReject.textContent = "Reject";
-                btnReject.className = "btn reject";
-                btnReject.style.marginLeft = "5px";
-                btnReject.onclick = () => rejectDriver(d._id);
-
-                card.appendChild(btnApprove);
-                card.appendChild(btnReject);
-                pendingList.appendChild(card);
-            } else {
-                card.classList.add("approved");
-                approvedList.appendChild(card);
-            }
-        });
-    } catch (err) {
-        console.error("Error loading drivers:", err);
-    }
-}
-
-// Approve driver
-async function approveDriver(driverId){
-    try {
-        const res = await fetch(`${API}/drivers/approve`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ driverId })
-        });
-        const data = await res.json();
-        if(data.success){
-            alert("Driver Approved!");
-            socket.emit("driverApproved", driverId);
-            loadDrivers();
+            pending += listing + "</div>";
         }
-    } catch(err) { console.error(err); }
-}
 
-// Reject driver
-async function rejectDriver(driverId){
-    try {
-        const res = await fetch(`${API}/drivers/reject`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ driverId })
-        });
-        const data = await res.json();
-        if(data.success){
-            alert("Driver Rejected!");
-            socket.emit("driverRejected", driverId);
-            loadDrivers();
+        if(app.status === "approved"){
+            approved += listing + "</div>";
         }
-    } catch(err) { console.error(err); }
+
+        if(app.status === "rejected"){
+            listing += `<br><i>Reason: ${app.rejectReason || "No reason provided"}</i>`;
+            rejected += listing + "</div>";
+        }
+    });
+
+    document.getElementById("pendingList").innerHTML = pending || "<i>No pending applications</i>";
+    document.getElementById("approvedList").innerHTML = approved || "<i>No approved drivers</i>";
+    document.getElementById("rejectedList").innerHTML = rejected || "<i>No rejected applications</i>";
 }
 
-// Listen for real-time updates (optional if multiple admins)
-socket.on("updateDrivers", () => loadDrivers());
+// APPROVE DRIVER
+async function approve(id){
+    await fetch(`${API}/drivers/approve`, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({ driverId: id })
+    });
+    loadApplications();
+}
 
-// Initial load
-loadDrivers();
+// REJECT DRIVER
+async function rejectApp(id){
+    const reason = prompt("Reason for rejection:");
+    
+    await fetch(`${API}/drivers/reject`, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({ driverId: id, reason })
+    });
+
+    loadApplications();
+}
+
+// INITIAL LOAD
+loadApplications();
 </script>
+
 </body>
+<footer>
+    <p>© 2025 Nganya Project</p>
+</footer>
 </html>

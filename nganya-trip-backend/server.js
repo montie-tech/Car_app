@@ -209,6 +209,30 @@ app.post('/api/drivers/approve', async (req,res)=>{
         driver.status = 'approved';
         await driver.save();
 
+// Reject driver
+app.post('/api/drivers/reject', async (req, res) => {
+    const { driverId, reason } = req.body;
+
+    if (!driverId)
+        return res.status(400).json({ success: false, message: 'Driver ID required' });
+
+    try {
+        const driver = await Driver.findById(driverId);
+        if (!driver)
+            return res.status(404).json({ success: false, message: 'Driver not found' });
+
+        driver.status = 'rejected';
+        driver.rejectReason = reason || "No reason provided";
+        driver.isOnline = false;
+        await driver.save();
+
+        res.json({ success: true, driver });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Failed to reject driver' });
+    }
+});
+
         // Emit updated online drivers
         const driversOnline = await Driver.find({ isOnline:true, status:'approved' });
         io.emit('driversOnlineList', driversOnline.map(d=>({

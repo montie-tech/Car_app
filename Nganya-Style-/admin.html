@@ -66,68 +66,114 @@ footer {
 </div>
 </div>
 <script>
-const API = "http://localhost:5000/api";
+const API = "https://nganya-project.onrender.com/api";
 
 // LOAD ALL DRIVERS (PENDING / APPROVED / REJECTED)
 async function loadApplications(){
-    const res = await fetch(`${API}/drivers/all`);
-    const data = await res.json();
+    try {
+        const res = await fetch(`${API}/drivers/all`);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        console.log('Loaded drivers:', data); // Debug log
 
-    let pending = "";
-    let approved = "";
-    let rejected = "";
+        let pending = "";
+        let approved = "";
+        let rejected = "";
 
-    data.forEach(app => {
-        let listing = `
-            <div class="list-item">
-                <b>${app.name}</b> – ${app.vehicle || '---'} – ${app.route || '---'}<br>
-                Phone: ${app.phone} — Capacity: ${app.capacity || '---'}<br>
-        `;
-
-        if(app.status === "pending"){
-            listing += `
-                <button class="approve" onclick="approve('${app._id}')">Approve</button>
-                <button class="reject" onclick="rejectApp('${app._id}')">Reject</button>
+        data.forEach(app => {
+            let listing = `
+                <div class="list-item">
+                    <b>${app.name}</b> – ${app.vehicle || '---'} – ${app.route || '---'}<br>
+                    Phone: ${app.phone} — Capacity: ${app.capacity || '---'}<br>
             `;
-            pending += listing + "</div>";
-        }
 
-        if(app.status === "approved"){
-            approved += listing + "</div>";
-        }
+            if(app.status === "pending"){
+                listing += `
+                    <button class="approve" onclick="approve('${app._id}')">Approve</button>
+                    <button class="reject" onclick="rejectApp('${app._id}')">Reject</button>
+                `;
+                pending += listing + "</div>";
+            }
+            else if(app.status === "approved"){
+                approved += listing + "</div>";
+            }
+            else if(app.status === "rejected"){
+                listing += `<br><i>Reason: ${app.rejectReason || "No reason provided"}</i>`;
+                rejected += listing + "</div>";
+            }
+        });
 
-        if(app.status === "rejected"){
-            listing += `<br><i>Reason: ${app.rejectReason || "No reason provided"}</i>`;
-            rejected += listing + "</div>";
-        }
-    });
-
-    document.getElementById("pendingList").innerHTML = pending || "<i>No pending applications</i>";
-    document.getElementById("approvedList").innerHTML = approved || "<i>No approved drivers</i>";
-    document.getElementById("rejectedList").innerHTML = rejected || "<i>No rejected applications</i>";
+        document.getElementById("pendingList").innerHTML = pending || "<i>No pending applications</i>";
+        document.getElementById("approvedList").innerHTML = approved || "<i>No approved drivers</i>";
+        document.getElementById("rejectedList").innerHTML = rejected || "<i>No rejected applications</i>";
+    } catch (error) {
+        console.error('Error loading applications:', error);
+        alert('Failed to load applications: ' + error.message);
+    }
 }
 
 // APPROVE DRIVER
 async function approve(id){
-    await fetch(`${API}/drivers/approve`, {
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ driverId: id })
-    });
-    loadApplications();
+    try {
+        const response = await fetch(`${API}/drivers/approve`, {
+            method: "POST",
+            headers: { "Content-Type":"application/json" },
+            body: JSON.stringify({ driverId: id })
+        });
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const result = await response.json();
+        console.log('Approve result:', result); // Debug log
+        
+        if (result.success) {
+            await loadApplications();
+        } else {
+            alert('Approve failed: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error approving driver:', error);
+        alert('Failed to approve driver: ' + error.message);
+    }
 }
 
-// REJECT DRIVER
+// REJECT DRIVER - IMPROVED WITH ERROR HANDLING
 async function rejectApp(id){
     const reason = prompt("Reason for rejection:");
     
-    await fetch(`${API}/drivers/reject`, {
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ driverId: id, reason })
-    });
+    // If user cancels the prompt, do nothing
+    if (reason === null) return;
+    
+    try {
+        console.log('Rejecting driver:', id, 'Reason:', reason); // Debug log
+        
+        const response = await fetch(`${API}/drivers/reject`, {
+            method: "POST",
+            headers: { "Content-Type":"application/json" },
+            body: JSON.stringify({ 
+                driverId: id, 
+                reason: reason || "No reason provided" 
+            })
+        });
 
-    loadApplications();
+        console.log('Response status:', response.status); // Debug log
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Reject result:', result); // Debug log
+        
+        if (result.success) {
+            console.log('Driver rejected successfully');
+            await loadApplications();
+        } else {
+            alert('Reject failed: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error rejecting driver:', error);
+        alert('Failed to reject driver: ' + error.message);
+    }
 }
 
 // INITIAL LOAD

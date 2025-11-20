@@ -186,11 +186,13 @@ app.post('/api/drivers/bookings/accept', async (req,res)=>{
 
 // -------------------- ADMIN FIX --------------------
 
+// -------------------- ADMIN FIX --------------------
+
 // Get all drivers
 app.get('/api/drivers/all', async (req,res)=>{
     try{
         const drivers = await Driver.find();
-        res.json(drivers); // returns JSON, fixes 404 + invalid JSON issue
+        res.json(drivers);
     }catch(err){
         console.error(err);
         res.status(500).json({ success:false, message:'Failed to fetch drivers' });
@@ -209,7 +211,24 @@ app.post('/api/drivers/approve', async (req,res)=>{
         driver.status = 'approved';
         await driver.save();
 
-// Reject driver
+        // Emit updated online drivers
+        const driversOnline = await Driver.find({ isOnline:true, status:'approved' });
+        io.emit('driversOnlineList', driversOnline.map(d=>({
+            _id: d._id,
+            name: d.name,
+            vehicle: d.vehicle,
+            route: d.route,
+            capacity: d.capacity
+        })));
+
+        res.json({ success:true, driver });
+    }catch(err){
+        console.error(err);
+        res.status(500).json({ success:false, message:'Failed to approve driver' });
+    }
+});
+
+// Reject driver - MOVED OUTSIDE OF APPROVE ROUTE
 app.post('/api/drivers/reject', async (req, res) => {
     const { driverId, reason } = req.body;
 
@@ -230,23 +249,6 @@ app.post('/api/drivers/reject', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: 'Failed to reject driver' });
-    }
-});
-
-        // Emit updated online drivers
-        const driversOnline = await Driver.find({ isOnline:true, status:'approved' });
-        io.emit('driversOnlineList', driversOnline.map(d=>({
-            _id: d._id,
-            name: d.name,
-            vehicle: d.vehicle,
-            route: d.route,
-            capacity: d.capacity
-        })));
-
-        res.json({ success:true, driver });
-    }catch(err){
-        console.error(err);
-        res.status(500).json({ success:false, message:'Failed to approve driver' });
     }
 });
 

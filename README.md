@@ -95,7 +95,7 @@ node server.js
 
 
 Backend will run on http://localhost:5000
-
+but the one on production is running on mongo db atlas  and render so the render link replacde with http://localhost:5000 incase you want to run on local host
 Open frontend:
 
 Open Nganya-Style-/client.html in a browser

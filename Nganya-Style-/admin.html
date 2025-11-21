@@ -83,6 +83,7 @@ footer {
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
+<<<<<<< HEAD
 const API = "http://localhost:5000/api";
 const socket = io("http://localhost:5000");
 
@@ -163,9 +164,26 @@ async function rejectApp(id) {
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({ driverId: id, reason })
-    });
+    })
+        console.log('Response status:', response.status); // Debug log
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    loadApplications();
+        const result = await response.json();
+        console.log('Reject result:', result); // Debug log
+        
+        if (result.success) {
+            console.log('Driver rejected successfully');
+            await loadApplications();
+        } else {
+            alert('Reject failed: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error rejecting driver:', error);
+        alert('Failed to reject driver: ' + error.message);
+    }
 }
 
 // SOCKET

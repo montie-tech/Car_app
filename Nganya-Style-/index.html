@@ -167,8 +167,8 @@
 
         /* ---------------- HERO ---------------- */
         .hero {
-            background: url('https://images.pexels.com/photos/4171204/pexels-photo-4171204.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;
-            height: 70vh;
+            background: url('https://images.pexels.com/photos/13674066/pexels-photo-13674066.jpeg') center/cover;
+            height: 75vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -217,16 +217,130 @@
 
         .primary { background: #ffcc00; color: #000; }
         .secondary { background: #fff; color: #000; }
+<<<<<<< HEAD
         .section { padding: 40px; max-width: 1000px; margin: auto; }
         .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
         .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         footer { text-align: center; padding: 20px; background: #000; color: #fff; margin-top: 40px; }
         a { text-decoration: none; }
+=======
+        .admin { background: #222; color: #fff; }
+
+        .btn:hover { transform: translateY(-3px); opacity: 0.9; }
+
+        /* ---------------- FEATURES ---------------- */
+        .section {
+            padding: 60px 40px;
+            max-width: 1100px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* ---------------- FOOTER ---------------- */
+        footer {
+            background: #111;
+            color: #ccc;
+            padding: 40px 20px;
+            margin-top: 50px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+            gap: 30px;
+            max-width: 1100px;
+            margin: auto;
+            text-align: left;
+        }
+
+        footer h3 { color: white; }
+
+        footer a {
+            color: #ffcc00;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        footer p { margin: 6px 0; }
+
+        .socials a {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 20px;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .socials a:hover { color: #ffcc00; }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-right {
+                flex-direction: column;
+                gap: 15px;
+                width: 100%;
+            }
+            
+            nav ul {
+                gap: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .download-nav-btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+            }
+        }
+>>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
     </style>
 </head>
 
 <body>
 
+<<<<<<< HEAD
 <header>
     <h2>Nganya App</h2>
 </header>
@@ -243,6 +357,52 @@
             <button class="btn primary" onclick="downloadApp()">📱 Download App</button>
         </div>
     </div>
+=======
+<!-- ADVERTISEMENT POPUP -->
+<div class="ad-popup" id="adPopup">
+    <button class="close-ad" onclick="closeAd()">×</button>
+    <div class="ad-content">
+        <h2>📱 Download Our App!</h2>
+        <p>Get the full Nganya Style experience on your mobile device. Book rides faster and get exclusive features!</p>
+        
+        <button class="download-btn" onclick="downloadApp()">
+            ⬇️ Download APK Now
+        </button>
+        
+        <div class="countdown" id="countdown">
+            This ad will close in <span id="timer">10</span> seconds
+        </div>
+    </div>
+</div>
+
+<!-- NAVIGATION BAR -->
+<nav>
+    <h1>Nganya Style</h1>
+    <div class="nav-right">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="client.html">Passenger</a></li>
+            <li><a href="driver.html">Driver</a></li>
+            <li><a href="admin.html">Admin</a></li>
+        </ul>
+        
+    </div>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="overlay">
+        <h1>Smart, Fast & Stylish Matatu Rides</h1>
+        <p>Connecting passengers, drivers, and administrators with real-time transport technology that makes urban travel smooth and transparent.</p>
+
+        <div class="cta-buttons">
+            <a href="client.html" class="btn primary">Book a Ride</a>
+            <a href="driver.html" class="btn secondary">Become a Rider</a>
+            <a href="admin.html" class="btn admin">Admin Control</a>
+            <button class="btn primary" onclick="downloadApp()">📱 Download App</button>
+        </div>
+    </div>
+>>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
 </section>
 
 <!-- FEATURES SECTION -->
@@ -280,7 +440,34 @@
 
 <!-- FOOTER -->
 <footer>
+<<<<<<< HEAD
     <p>© 2025 Nganya App</p>
+=======
+    <div class="footer-grid">
+        <div>
+            <h3>Nganya Style</h3>
+            <p>Smart transport for modern Kenya.</p>
+        </div>
+
+        <div>
+            <h3>Navigation</h3>
+            <a href="index.html">Home</a>
+            <a href="client.html">Passenger</a>
+            <a href="driver.html">Driver</a>
+            <a href="admin.html">Admin</a>
+        </div>
+        
+        <div>
+            <h3>Get The App</h3>
+            <a href="javascript:void(0)" onclick="downloadApp()">📱 Download APK</a>
+            <p>Available for Android devices</p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        © 2025 Nganya Project – All Rights Reserved
+    </div>
+>>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
 </footer>
 
 <script>

@@ -4,38 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nganya Style – Driver Portal</title>
+
 <style>
-body { margin: 0; font-family: Poppins,sans-serif; background: #f2f2f2; }
+body { margin: 0; font-family: Poppins, sans-serif; background: #f2f2f2; min-height: 100vh; display: flex; flex-direction: column; }
 header { background: #000; color: #fff; padding: 20px; text-align: center; }
-.container { max-width: 500px; margin: auto; padding: 20px; }
+
+.container { max-width: 500px; margin: auto; padding: 20px; flex: 1; }
 .card { background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
 input, select { width: 100%; padding: 10px; margin: 8px 0 15px; border-radius: 6px; border: 1px solid #ccc; }
 .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; }
+
 .primary { background: #0d6efd; color: white; }
 .danger { background: crimson; color: white; }
 .success { background: #28a745; color: white; }
 .hidden { display: none; }
+
 footer {
   background: #222;
   color: white;
   text-align: center;
-  padding: 5px;
-  margin-top: 30px;
+  padding: 10px;
   font-size: 1rem;
-  margin-bottom: -25px;
-  margin-left: -28px;
-  margin-right: -28px;
 }
 </style>
+
 </head>
 <body>
+
 <header>
     <h2>Nganya Style – Driver Portal</h2>
 </header>
 
 <div class="container">
 
-    <!-- LOGIN FIRST -->
+    <!-- LOGIN -->
     <div id="loginSection" class="card">
         <h3>Driver Login</h3>
         <input id="loginPhone" placeholder="Phone Number" />
@@ -43,8 +46,7 @@ footer {
         <button class="btn primary" onclick="loginDriver()">Login</button>
 
         <p style="text-align:center;margin-top:10px;">
-        Don't have an account?  
-        <a href="#" onclick="show('createAccountSection')">Create one</a>
+            Don’t have an account? <a href="#" onclick="show('createAccountSection')">Create one</a>
         </p>
     </div>
 
@@ -57,12 +59,11 @@ footer {
         <button class="btn primary" onclick="createAccount()">Create Account</button>
 
         <p style="text-align:center;margin-top:10px;">
-        Already registered?  
-        <a href="#" onclick="show('loginSection')">Login</a>
+            Already registered? <a href="#" onclick="show('loginSection')">Login</a>
         </p>
     </div>
-    
-    <!-- APPLICATION FORM -->
+
+    <!-- APPLICATION -->
     <div id="applicationSection" class="card hidden">
         <h3>Driver Application</h3>
         <input id="vehicleNo" placeholder="Vehicle / Plate Number" />
@@ -86,18 +87,25 @@ footer {
         <h3>Trip Requests</h3>
         <div id="requests"></div>
     </div>
+
 </div>
 
+<footer>
+    © 2025 Nganya App
+</footer>
+
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
 <script>
 const API = "http://localhost:5000/api";
 let socket = null;
 let driver = null;
 
-// SHOW/HIDE SECTIONS
+// SHOW / HIDE SECTIONS
 function show(id){
     ['loginSection','createAccountSection','applicationSection','dashboard']
-    .forEach(x=>document.getElementById(x).classList.add('hidden'));
+    .forEach(x => document.getElementById(x).classList.add('hidden'));
+    
     document.getElementById(id).classList.remove('hidden');
 }
 
@@ -106,13 +114,15 @@ async function createAccount(){
     const name = regName.value;
     const phone = regPhone.value;
     const pass = regPass.value;
-    if(!name||!phone||!pass) return alert("Fill all fields");
+
+    if(!name || !phone || !pass) return alert("Fill all fields");
 
     const res = await fetch(`${API}/drivers/register`, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({ name, phone, password: pass })
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name, phone, password: pass })
     });
+
     const data = await res.json();
     if(!data.success) return alert(data.message);
 
@@ -126,15 +136,15 @@ async function submitApplication(){
     const routeVal = route.value;
     const capacity = capacityVal.value;
 
-    if(!vehicle||!routeVal||!capacity) return alert("Fill all fields");
+    if(!vehicle || !routeVal || !capacity) return alert("Fill all fields");
 
     const res = await fetch(`${API}/drivers/application`, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({ driverId: driver._id, vehicle, route: routeVal, capacity })
     });
-    const data = await res.json();
 
+    const data = await res.json();
     if(!data.success) return alert(data.message);
 
     alert("Application submitted. Wait for approval then login.");
@@ -146,84 +156,66 @@ async function loginDriver(){
     const phone = loginPhone.value;
     const pass = loginPass.value;
 
-    if(!phone||!pass) return alert("Fill all fields");
+    if(!phone || !pass) return alert("Fill all fields");
 
     const res = await fetch(`${API}/drivers/login`, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({ phone, password:pass })
     });
-    const data = await res.json();
 
+    const data = await res.json();
     if(!data.success) return alert(data.message);
-    
+
     driver = data.driver;
     loadDashboard();
 }
 
-// DASHBOARD
+// LOAD DASHBOARD
 function loadDashboard(){
     dName.innerText = driver.name;
     dVehicle.innerText = driver.vehicle || '';
     dRoute.innerText = driver.route || '';
     dCapacity.innerText = driver.capacity || '';
+
     show('dashboard');
 }
 
-// === ONLINE BUTTON FUNCTION ===
+// GO ONLINE
 async function goOnline(){
-    try{
-        const res = await fetch(`${API}/drivers/toggleOnline`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ driverId: driver._id, isOnline: true })
-        });
+    const res = await fetch(`${API}/drivers/toggleOnline`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ driverId: driver._id, isOnline:true })
+    });
 
-        const data = await res.json();
-        if (!data.success) return alert(data.message);
+    const data = await res.json();
+    if(!data.success) return alert(data.message);
 
-        // UI SWITCH
-        document.getElementById("onlineBtn").classList.add("hidden");
-        document.getElementById("offlineBtn").classList.remove("hidden");
-
-        alert("You are now ONLINE and available for passengers.");
-
-    }catch(err){
-        console.error(err);
-        alert("Failed to go online");
-    }
+    onlineBtn.classList.add("hidden");
+    offlineBtn.classList.remove("hidden");
+    alert("You are now ONLINE.");
 }
 
-// === OFFLINE BUTTON FUNCTION ===
+// GO OFFLINE
 async function goOffline(){
-    try{
-        const res = await fetch(`${API}/drivers/toggleOnline`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ driverId: driver._id, isOnline: false })
-        });
+    const res = await fetch(`${API}/drivers/toggleOnline`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ driverId: driver._id, isOnline:false })
+    });
 
-        const data = await res.json();
-        if (!data.success) return alert(data.message);
+    const data = await res.json();
+    if(!data.success) return alert(data.message);
 
-        // UI SWITCH
-        document.getElementById("offlineBtn").classList.add("hidden");
-        document.getElementById("onlineBtn").classList.remove("hidden");
-
-        alert("You are now OFFLINE.");
-
-    }catch(err){
-        console.error(err);
-        alert("Failed to go offline");
-    }
+    offlineBtn.classList.add("hidden");
+    onlineBtn.classList.remove("hidden");
+    alert("You are now OFFLINE.");
 }
 
-
-// START WITH LOGIN FIRST
+// Start with login first
 show('loginSection');
 </script>
+
 </body>
-<footer>
-    <p>© 2025 Nganya Project</p>
-</footer>
 </html>

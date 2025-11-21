@@ -19,7 +19,6 @@ input, select { width: 100%; padding: 10px; margin: 8px 0 15px; border-radius: 6
 .danger { background: crimson; color: white; }
 .success { background: #28a745; color: white; }
 .hidden { display: none; }
-<<<<<<< HEAD
 
 footer {
   background: #222;
@@ -28,8 +27,6 @@ footer {
   padding: 10px;
   font-size: 1rem;
 }
-=======
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
 </style>
 
 </head>
@@ -40,7 +37,6 @@ footer {
 </header>
 
 <div class="container">
-<<<<<<< HEAD
 
     <!-- LOGIN -->
     <div id="loginSection" class="card">
@@ -54,8 +50,6 @@ footer {
         </p>
     </div>
 
-=======
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
     <!-- CREATE ACCOUNT -->
     <div id="createAccountSection" class="card">
         <h3>Create Account</h3>
@@ -63,7 +57,6 @@ footer {
         <input id="regPhone" placeholder="Phone Number" />
         <input id="regPass" placeholder="Password" type="password" />
         <button class="btn primary" onclick="createAccount()">Create Account</button>
-<<<<<<< HEAD
 
         <p style="text-align:center;margin-top:10px;">
             Already registered? <a href="#" onclick="show('loginSection')">Login</a>
@@ -71,11 +64,6 @@ footer {
     </div>
 
     <!-- APPLICATION -->
-=======
-    </div>
-
-    <!-- APPLICATION FORM -->
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
     <div id="applicationSection" class="card hidden">
         <h3>Driver Application</h3>
         <input id="vehicleNo" placeholder="Vehicle / Plate Number" />
@@ -84,7 +72,7 @@ footer {
         <button class="btn primary" onclick="submitApplication()">Submit Application</button>
     </div>
 
-    <!-- LOGIN -->
+    <!-- LOGIN DUPLICATE (kept exactly as in source) -->
     <div id="loginSection" class="card hidden">
         <h3>Driver Login</h3>
         <input id="loginPhone" placeholder="Phone Number" />
@@ -123,20 +111,14 @@ let driver = null;
 
 // SHOW / HIDE SECTIONS
 function show(id){
-<<<<<<< HEAD
     ['loginSection','createAccountSection','applicationSection','dashboard']
     .forEach(x => document.getElementById(x).classList.add('hidden'));
-    
-=======
-    ['createAccountSection','applicationSection','loginSection','dashboard']
-    .forEach(x=>document.getElementById(x).classList.add('hidden'));
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
+
     document.getElementById(id).classList.remove('hidden');
 }
 
 // CREATE ACCOUNT
 async function createAccount(){
-<<<<<<< HEAD
     const name = regName.value;
     const phone = regPhone.value;
     const pass = regPass.value;
@@ -154,29 +136,10 @@ async function createAccount(){
 
     driver = data.driver;
     show('applicationSection');
-=======
-    const name = document.getElementById('regName').value;
-    const phone = document.getElementById('regPhone').value;
-    const pass = document.getElementById('regPass').value;
-    if(!name||!phone||!pass) return alert("Fill all fields");
-
-    try{
-        const res = await fetch(`${API}/drivers/register`, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({ name, phone, password: pass })
-        });
-        const data = await res.json();
-        if(!data.success) return alert(data.message);
-        driver = data.driver;
-        show('applicationSection');
-    }catch(err){ console.error(err); alert("Failed to register"); }
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
 }
 
 // SUBMIT APPLICATION
 async function submitApplication(){
-<<<<<<< HEAD
     const vehicle = vehicleNo.value;
     const routeVal = route.value;
     const capacity = capacityVal.value;
@@ -194,30 +157,10 @@ async function submitApplication(){
 
     alert("Application submitted. Wait for approval then login.");
     show('loginSection');
-=======
-    const vehicle = document.getElementById('vehicleNo').value;
-    const routeVal = document.getElementById('route').value;
-    const capacity = document.getElementById('capacityVal').value;
-    if(!vehicle||!routeVal||!capacity) return alert("Fill all fields");
-
-    try{
-        const res = await fetch(`${API}/drivers/application`, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({ driverId: driver._id, vehicle, route: routeVal, capacity })
-        });
-        const data = await res.json();
-        if(!data.success) return alert(data.message);
-
-        alert("Application submitted for approval. You can now login once approved.");
-        show('loginSection'); // go directly to login
-    }catch(err){ console.error(err); alert("Failed to submit application"); }
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
 }
 
 // LOGIN
 async function loginDriver(){
-<<<<<<< HEAD
     const phone = loginPhone.value;
     const pass = loginPass.value;
 
@@ -234,39 +177,15 @@ async function loginDriver(){
 
     driver = data.driver;
     loadDashboard();
-=======
-    const phone = document.getElementById('loginPhone').value;
-    const pass = document.getElementById('loginPass').value;
-    if(!phone||!pass) return alert("Fill all fields");
-
-    try{
-        const res = await fetch(`${API}/drivers/login`, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({ phone, password:pass })
-        });
-        const data = await res.json();
-        if(!data.success) return alert(data.message);
-        driver = data.driver;
-        loadDashboard();
-    }catch(err){ console.error(err); alert("Login failed"); }
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
 }
 
 // LOAD DASHBOARD
 function loadDashboard(){
-<<<<<<< HEAD
     dName.innerText = driver.name;
     dVehicle.innerText = driver.vehicle || '';
     dRoute.innerText = driver.route || '';
     dCapacity.innerText = driver.capacity || '';
 
-=======
-    document.getElementById('dName').innerText = driver.name;
-    document.getElementById('dVehicle').innerText = driver.vehicle || '';
-    document.getElementById('dRoute').innerText = driver.route || '';
-    document.getElementById('dCapacity').innerText = driver.capacity || '';
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
     show('dashboard');
 
     socket = io("https://nganya-project.onrender.com");
@@ -280,7 +199,6 @@ function loadDashboard(){
     });
 }
 
-<<<<<<< HEAD
 // GO ONLINE
 async function goOnline(){
     const res = await fetch(`${API}/drivers/toggleOnline`, {
@@ -315,45 +233,6 @@ async function goOffline(){
 
 // Start with login first
 show('loginSection');
-=======
-// ONLINE/OFFLINE
-async function goOnline(){
-    document.getElementById('onlineBtn').classList.add('hidden');
-    document.getElementById('offlineBtn').classList.remove('hidden');
-    const res = await fetch(`${API}/drivers/toggleOnline`, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({ driverId: driver._id, isOnline:true })
-    });
-    console.log(await res.json());
-}
-
-async function goOffline(){
-    document.getElementById('offlineBtn').classList.add('hidden');
-    document.getElementById('onlineBtn').classList.remove('hidden');
-    const res = await fetch(`${API}/drivers/toggleOnline`, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({ driverId: driver._id, isOnline:false })
-    });
-    console.log(await res.json());
-}
-
-// ACCEPT BOOKING
-async function acceptBooking(bookingId){
-    const res = await fetch(`${API}/drivers/bookings/accept`, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({ driverId: driver._id, bookingId })
-    });
-    const data = await res.json();
-    if(data.success) alert("Booking accepted");
-}
-
-// ALWAYS START AT REGISTRATION
-show('createAccountSection');
-
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
 </script>
 
 </body>

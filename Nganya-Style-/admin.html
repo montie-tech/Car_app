@@ -83,11 +83,11 @@ footer {
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
-<<<<<<< HEAD
+/* -------------------------- CONFIG -------------------------- */
 const API = "http://localhost:5000/api";
 const socket = io("http://localhost:5000");
 
-// SHOW NOTIFICATION
+/* -------------------------- NOTIFICATION -------------------------- */
 function showNotification() {
     const box = document.getElementById("notifyBox");
     const sound = document.getElementById("alertSound");
@@ -98,7 +98,7 @@ function showNotification() {
     setTimeout(() => { box.style.right = "-400px"; }, 3000);
 }
 
-// LOAD APPLICATIONS
+/* -------------------------- LOAD APPLICATIONS -------------------------- */
 async function loadApplications() {
     try {
         const res = await fetch(`${API}/drivers/all`);
@@ -109,25 +109,26 @@ async function loadApplications() {
         let rejected = "";
 
         data.forEach(app => {
-            let listing = `
-                <div class="list-item">
-                    <b>${app.name}</b> – ${app.vehicle || '---'} – ${app.route || '---'}<br>
-                    Phone: ${app.phone} — Capacity: ${app.capacity || '---'}<br>
-            `;
+            let block = `
+            <div class="list-item">
+                <b>${app.name}</b> – ${app.vehicle || '---'} – ${app.route || '---'}<br>
+                Phone: ${app.phone} — Capacity: ${app.capacity || '---'}<br>`;
 
             if (app.status === "pending") {
-                listing += `
+                block += `
                     <button class="approve" onclick="approve('${app._id}')">Approve</button>
                     <button class="reject" onclick="rejectApp('${app._id}')">Reject</button>
                 `;
-                pending += listing + "</div>";
-            } 
-            else if (app.status === "approved") {
-                approved += listing + "</div>";
+                pending += block + "</div>";
             }
-            else if (app.status === "rejected") {
-                listing += `<br><i>Reason: ${app.rejectReason || "No reason provided"}</i>`;
-                rejected += listing + "</div>";
+
+            if (app.status === "approved") {
+                approved += block + "</div>";
+            }
+
+            if (app.status === "rejected") {
+                block += `<br><i>Reason: ${app.rejectReason || "No reason provided"}</i>`;
+                rejected += block + "</div>";
             }
         });
 
@@ -141,17 +142,26 @@ async function loadApplications() {
     }
 }
 
-// APPROVE
+/* -------------------------- APPROVE -------------------------- */
 async function approve(id) {
-    await fetch(`${API}/drivers/approve`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ driverId: id })
-    });
-    loadApplications();
+    try {
+        const res = await fetch(`${API}/drivers/approve`, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ driverId: id })
+        });
+
+        const result = await res.json();
+        if (!result.success) return alert(result.message);
+
+        loadApplications();
+    } catch (error) {
+        alert("Failed to approve driver");
+        console.log(error);
+    }
 }
 
-// REJECT
+/* -------------------------- REJECT -------------------------- */
 async function rejectApp(id) {
     const reason = prompt("Reason for rejection:");
 
@@ -160,39 +170,31 @@ async function rejectApp(id) {
         return;
     }
 
-    await fetch(`${API}/drivers/reject`, {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ driverId: id, reason })
-    })
-        console.log('Response status:', response.status); // Debug log
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    try {
+        const res = await fetch(`${API}/drivers/reject`, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ driverId: id, reason })
+        });
 
-        const result = await response.json();
-        console.log('Reject result:', result); // Debug log
-        
-        if (result.success) {
-            console.log('Driver rejected successfully');
-            await loadApplications();
-        } else {
-            alert('Reject failed: ' + result.message);
-        }
+        const result = await res.json();
+        if (!result.success) return alert(result.message);
+
+        loadApplications();
+
     } catch (error) {
-        console.error('Error rejecting driver:', error);
-        alert('Failed to reject driver: ' + error.message);
+        alert("Failed to reject driver");
+        console.log(error);
     }
 }
 
-// SOCKET
+/* -------------------------- SOCKET EVENTS -------------------------- */
 socket.on("newApplication", () => {
     showNotification();
     loadApplications();
 });
 
-// INITIAL LOAD
+/* -------------------------- INITIAL LOAD -------------------------- */
 loadApplications();
 </script>
 

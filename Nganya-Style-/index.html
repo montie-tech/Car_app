@@ -217,13 +217,6 @@
 
         .primary { background: #ffcc00; color: #000; }
         .secondary { background: #fff; color: #000; }
-<<<<<<< HEAD
-        .section { padding: 40px; max-width: 1000px; margin: auto; }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        footer { text-align: center; padding: 20px; background: #000; color: #fff; margin-top: 40px; }
-        a { text-decoration: none; }
-=======
         .admin { background: #222; color: #fff; }
 
         .btn:hover { transform: translateY(-3px); opacity: 0.9; }
@@ -273,14 +266,7 @@
         }
 
         footer h3 { color: white; }
-
-        footer a {
-            color: #ffcc00;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 6px;
-        }
-
+        footer a { color: #ffcc00; text-decoration: none; display: block; margin-bottom: 6px; }
         footer p { margin: 6px 0; }
 
         .socials a {
@@ -320,11 +306,6 @@
                 flex-wrap: wrap;
             }
             
-            .download-nav-btn {
-                width: 100%;
-                text-align: center;
-            }
-            
             .cta-buttons {
                 flex-direction: column;
                 align-items: center;
@@ -334,30 +315,11 @@
                 width: 200px;
             }
         }
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
     </style>
 </head>
 
 <body>
 
-<<<<<<< HEAD
-<header>
-    <h2>Nganya App</h2>
-</header>
-
-<section class="hero">
-    <div class="overlay">
-        <h1>Smart, Fast & Stylish Matatu Rides</h1>
-        <p>Connecting passengers, drivers, and administrators with real-time transport technology that makes urban travel smooth and transparent.</p>
-
-        <div class="cta-buttons">
-            <a href="client.html" class="btn primary">Book a Ride</a>
-            <a href="driver.html" class="btn secondary">Become a Rider</a>
-            <a href="admin.html" class="btn admin">Admin Control</a>
-            <button class="btn primary" onclick="downloadApp()">📱 Download App</button>
-        </div>
-    </div>
-=======
 <!-- ADVERTISEMENT POPUP -->
 <div class="ad-popup" id="adPopup">
     <button class="close-ad" onclick="closeAd()">×</button>
@@ -385,7 +347,6 @@
             <li><a href="driver.html">Driver</a></li>
             <li><a href="admin.html">Admin</a></li>
         </ul>
-        
     </div>
 </nav>
 
@@ -402,7 +363,6 @@
             <button class="btn primary" onclick="downloadApp()">📱 Download App</button>
         </div>
     </div>
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
 </section>
 
 <!-- FEATURES SECTION -->
@@ -440,9 +400,6 @@
 
 <!-- FOOTER -->
 <footer>
-<<<<<<< HEAD
-    <p>© 2025 Nganya App</p>
-=======
     <div class="footer-grid">
         <div>
             <h3>Nganya Style</h3>
@@ -465,9 +422,9 @@
     </div>
 
     <div class="footer-bottom">
-        © 2025 Nganya Project – All Rights Reserved
+        © 2025 Nganya App – All Rights Reserved
     </div>
->>>>>>> f2c15c5ef020e326766610b6419280210fd8fabb
+
 </footer>
 
 <script>
@@ -488,8 +445,6 @@
         const popup = document.getElementById('adPopup');
         popup.classList.add('active');
         sessionStorage.setItem('adShown', 'true');
-        
-        // Start countdown
         startCountdown();
     }
 
@@ -498,10 +453,9 @@
         popup.classList.remove('active');
         clearInterval(countdownTimer);
         
-        // Show ad again after 5 minutes
         setTimeout(() => {
             sessionStorage.removeItem('adShown');
-        }, 5 * 60 * 1000); // 5 minutes
+        }, 5 * 60 * 1000);
     }
 
     function startCountdown() {
@@ -520,14 +474,10 @@
     }
 
     function downloadApp() {
-        // Open APK download in new tab
         window.open('https://files.giftedtech.top/file/NGANYA%20STYLE.apk', '_blank');
-        
-        // Optional: Close the ad if it's open
         closeAd();
     }
 
-    // Close ad when clicking outside the content
     document.getElementById('adPopup').addEventListener('click', function(e) {
         if (e.target === this) {
             closeAd();
